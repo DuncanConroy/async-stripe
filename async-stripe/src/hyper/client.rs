@@ -98,7 +98,7 @@ impl Client {
         let mut tries = 0;
         let mut last_status: Option<StatusCode> = None;
         let mut last_retry_header: Option<bool> = None;
-        let mut last_error = StripeError::ClientError("invalid strategy".into());
+        let mut last_error = StripeError::ClientError("invalid strategy".to_string().into());
 
         if let Some(key) = strategy.get_key() {
             const HEADER_NAME: HeaderName = HeaderName::from_static("idempotency-key");

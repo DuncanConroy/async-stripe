@@ -128,7 +128,7 @@ impl ClientBuilder {
 }
 
 fn cons_header_err(config_name: &'static str) -> StripeError {
-    StripeError::ClientError(format!("`{config_name}` can only include visible ASCII characters"))
+    StripeError::ConfigError(format!("`{config_name}` can only include visible ASCII characters"))
 }
 
 /// A validated client configuration. All configuration types are carefully chosen to be

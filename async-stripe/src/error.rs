@@ -14,8 +14,8 @@ pub enum StripeError {
     #[error("error deserializing a request: {0}")]
     JSONDeserialize(String),
     /// An error occurred communicating with Stripe.
-    #[error("client error: {0:?}")]
-    ClientError(#[from] hyper_util::client::legacy::Error),
+    #[error("client error: {0}")]
+    ClientError(Box<dyn std::error::Error + Send + Sync>),
     /// The client configuration was invalid.
     #[error("configuration error: {0}")]
     ConfigError(String),
@@ -30,26 +30,26 @@ impl StripeClientErr for StripeError {
     }
 }
 
-// #[cfg(feature = "__hyper")]
-// impl From<hyper::Error> for StripeError {
-//     fn from(err: hyper::Error) -> StripeError {
-//         StripeError::ClientError(err.to_string())
-//     }
-// }
+#[cfg(feature = "__hyper")]
+impl From<hyper::Error> for StripeError {
+    fn from(err: hyper::Error) -> StripeError {
+        StripeError::ClientError(Box::new(err))
+    }
+}
 
-// #[cfg(feature = "__hyper")]
-// impl From<hyper_util::client::legacy::Error> for StripeError {
-//     fn from(err: hyper_util::client::legacy::Error) -> StripeError {
-//         StripeError::ClientError(err.to_string())
-//     }
-// }
+#[cfg(feature = "__hyper")]
+impl From<hyper_util::client::legacy::Error> for StripeError {
+    fn from(err: hyper_util::client::legacy::Error) -> StripeError {
+        StripeError::ClientError(Box::new(err))
+    }
+}
 
-// #[cfg(feature = "__hyper")]
-// impl From<hyper::http::Error> for StripeError {
-//     fn from(err: hyper::http::Error) -> StripeError {
-//         StripeError::ClientError(err.to_string())
-//     }
-// }
+#[cfg(feature = "__hyper")]
+impl From<hyper::http::Error> for StripeError {
+    fn from(err: hyper::http::Error) -> StripeError {
+        StripeError::ClientError(Box::new(err))
+    }
+}
 
 #[cfg(feature = "async-std-surf")]
 impl From<http_types::Error> for StripeError {
